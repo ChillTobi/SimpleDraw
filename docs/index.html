@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimpleDraw – User Documentation</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --surface: #ffffff; --border: #dee2e6;
+    --accent: #3a6ea8; --accent2: #e8f0fb;
+    --text: #212529; --muted: #6c757d;
+    --code-bg: #f1f3f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Segoe UI, Arial, sans-serif; font-size: 15px;
+         background: var(--bg); color: var(--text); display: flex; }
+  nav { width: 240px; min-height: 100vh; background: var(--surface);
+        border-right: 1px solid var(--border); padding: 20px 0;
+        position: sticky; top: 0; height: 100vh; overflow-y: auto; flex-shrink: 0; }
+  nav h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
+            color: var(--muted); padding: 8px 18px 4px; }
+  nav a { display: block; padding: 5px 18px; color: var(--text);
+          text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+  nav a:hover { background: var(--accent2); }
+  nav a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 600; }
+  nav .logo { font-size: 20px; font-weight: 700; padding: 0 18px 16px;
+              color: var(--accent); border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+  main { flex: 1; padding: 40px 48px; max-width: 900px; }
+  h1 { font-size: 28px; color: var(--accent); margin-bottom: 6px; }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-bottom: 6px;
+       border-bottom: 2px solid var(--accent2); color: var(--accent); }
+  h3 { font-size: 16px; margin: 22px 0 8px; color: #2c4a7a; }
+  p  { line-height: 1.7; margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { line-height: 1.7; margin-bottom: 3px; }
+  section { margin-bottom: 40px; }
+  .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  kbd { background: #e9ecef; border: 1px solid #ced4da; border-radius: 4px;
+        padding: 1px 6px; font-size: 12px; font-family: monospace; white-space: nowrap; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 14px; font-size: 14px; }
+  th { background: var(--accent2); color: var(--accent); text-align: left;
+       padding: 7px 10px; border: 1px solid var(--border); }
+  td { padding: 6px 10px; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #f8f9fa; }
+  .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+               gap: 12px; margin-bottom: 16px; }
+  .tool-card { background: var(--surface); border: 1px solid var(--border);
+               border-radius: 8px; padding: 12px 14px; }
+  .tool-card .name { font-weight: 700; font-size: 15px; color: var(--accent); }
+  .tool-card .key  { display: inline-block; margin-top: 4px; }
+  .tool-card p { font-size: 13px; margin-top: 6px; color: var(--muted); }
+  .note { background: var(--accent2); border-left: 4px solid var(--accent);
+          border-radius: 4px; padding: 10px 14px; margin: 12px 0; font-size: 14px; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px;
+         font-size: 13px; font-family: monospace; }
+  pre { background: var(--code-bg); padding: 12px 16px; border-radius: 6px;
+        font-size: 13px; font-family: monospace; overflow-x: auto; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">SimpleDraw</div>
+  <h2>Contents</h2>
+  <a href="#overview">Overview</a>
+  <a href="#interface">Interface</a>
+  <a href="#tools">Tools</a>
+  <a href="#pencil">— Pencil</a>
+  <a href="#pen-types">— Pen Types</a>
+  <a href="#spray">— Spray</a>
+  <a href="#forms">— Forms</a>
+  <a href="#fill">— Fill</a>
+  <a href="#eraser">— Eraser</a>
+  <a href="#selection">— Selection</a>
+  <a href="#text">— Text</a>
+  <a href="#picker">— Color Picker</a>
+  <a href="#ruler">— Ruler</a>
+  <a href="#colors">Colors</a>
+  <a href="#canvas">Canvas</a>
+  <a href="#effects">Effects</a>
+  <a href="#view">View</a>
+  <a href="#file">File Operations</a>
+  <a href="#shortcuts">Shortcuts</a>
+  <a href="#preferences">Preferences</a>
+  <a href="#scripts">Scripts / Macros</a>
+  <a href="#scripts-api">— Script API</a>
+  <a href="#recording">— Recording</a>
+</nav>
+<main>
+<h1>SimpleDraw</h1>
+<p class="subtitle">User Documentation &nbsp;·&nbsp; Version 1.0.0</p>
+
+<section id="overview">
+<h2>Overview</h2>
+<p>SimpleDraw is a lightweight pixel-based drawing application built with Python and PyQt5.
+It supports multiple drawing tools, shape forms, image effects, color management with history,
+dual left/right channel colors, macro recording, and flexible canvas sizing.</p>
+<img src="simple_draw_main.jpg" alt="SimpleDraw main window" style="width:100%;max-width:820px;border:1px solid var(--border);border-radius:6px;margin-top:12px;display:block;">
+</section>
+
+<section id="interface">
+<h2>Interface</h2>
+<h3>Layout</h3>
+<ul>
+  <li><strong>Menu bar</strong> – File, Edit, Effects, View, Info menus.</li>
+  <li><strong>Quick bar</strong> – Icon buttons: New, Open, Save, Save As, Print, Export, Undo, Redo, Zoom In/Out/Reset, Scripts, Record.</li>
+  <li><strong>Tool bar</strong> – Tool selector buttons, palette selector, grayscale toggle, background color, effect shortcuts.</li>
+  <li><strong>Option bar</strong> – Context-sensitive options for the active tool.</li>
+  <li><strong>Canvas</strong> – The drawing area. Supports pan (middle-mouse drag) and zoom (scroll wheel).</li>
+  <li><strong>Status bar</strong> – Shows cursor position, canvas size, zoom level, and color history swatches.</li>
+</ul>
+<h3>Mouse Navigation</h3>
+<table>
+  <tr><th>Action</th><th>Result</th></tr>
+  <tr><td>Middle-mouse drag</td><td>Pan the canvas</td></tr>
+  <tr><td>Scroll wheel</td><td>Zoom in / out (centered on cursor)</td></tr>
+  <tr><td>Left-click / drag</td><td>Primary action (left channel color)</td></tr>
+  <tr><td>Right-click / drag</td><td>Secondary action (right channel color)</td></tr>
+</table>
+</section>
+
+<section id="tools">
+<h2>Tools</h2>
+<p>Select a tool from the toolbar or press its keyboard shortcut.</p>
+<div class="tool-grid">
+  <div class="tool-card"><div class="name">🖌 Pencil</div><kbd class="key">P</kbd><p>Freehand drawing with configurable width, pen type, and smoothing.</p></div>
+  <div class="tool-card"><div class="name">Spray</div><kbd class="key">S</kbd><p>Airbrush-style spray with radius and density control.</p></div>
+  <div class="tool-card"><div class="name">Forms</div><kbd class="key">F</kbd><p>Draw geometric shapes: lines, rectangles, circles, and more.</p></div>
+  <div class="tool-card"><div class="name">🪣 Fill</div><kbd class="key">G</kbd><p>Flood-fill a region with the selected color.</p></div>
+  <div class="tool-card"><div class="name">🧹 Eraser</div><kbd class="key">E</kbd><p>Erase pixels to the background color.</p></div>
+  <div class="tool-card"><div class="name">⬚ Selection</div><kbd class="key">C</kbd><p>Select, cut, copy and move regions.</p></div>
+  <div class="tool-card"><div class="name">𝐓 Text</div><kbd class="key">T</kbd><p>Place formatted text on the canvas.</p></div>
+  <div class="tool-card"><div class="name">Picker</div><kbd class="key">I</kbd><p>Sample a color from the canvas.</p></div>
+  <div class="tool-card"><div class="name">📏 Ruler</div><kbd class="key">R</kbd><p>Measure distances and angles on the canvas.</p></div>
+</div>
+</section>
+
+<section id="pencil">
+<h2>Pencil</h2>
+<p>Freehand drawing tool. Left-click draws with the primary color; right-click draws with the secondary color. Both channels are independent and fully configurable.</p>
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>Width (L / R)</td><td>Stroke width in pixels for left and right channels independently.</td></tr>
+  <tr><td>Color (L / R)</td><td>Color buttons for each channel.</td></tr>
+  <tr><td>Pen type</td><td>Drawing style per channel. See <a href="#pen-types">Pen Types</a> below.</td></tr>
+  <tr><td>Intensity</td><td>Opacity / blend strength (1–100%). Affects all pen types.</td></tr>
+  <tr><td>∿ Bezier</td><td>Auto-smooth the stroke into a Bézier curve on mouse release.</td></tr>
+  <tr><td>Smooth / %</td><td>Real-time smoothing applied while drawing. Higher % = smoother strokes.</td></tr>
+  <tr><td>Line-Smooth %</td><td>Post-stroke smoothing strength applied on release (0 = off).</td></tr>
+  <tr><td>Sym H / Sym V</td><td>Mirror strokes horizontally and/or vertically around the canvas centre.</td></tr>
+</table>
+</section>
+
+<section id="pen-types">
+<h2>Pen Types</h2>
+<p>Each pencil channel has an independent pen type. The type affects how dots are blended onto the canvas as you draw. Intensity (1–100%) controls the overall opacity or blend strength for all types.</p>
+<table>
+  <tr><th>Type</th><th>Description</th></tr>
+  <tr><td><strong>normal</strong></td><td>Solid opaque pixels. At intensity &lt;100% each pixel is alpha-blended with the existing canvas color.</td></tr>
+  <tr><td><strong>chalk</strong></td><td>Rough, grainy texture. Dots are scattered randomly within the brush radius with varying opacity, simulating a chalk stick.</td></tr>
+  <tr><td><strong>charcoal</strong></td><td>Soft smudgy strokes. A radial falloff blends the color into the canvas with slight randomness, like dragging charcoal.</td></tr>
+  <tr><td><strong>calligraphy</strong></td><td>Flat angled nib. The brush is wide on one axis and thin on the other, rotated 45°, producing thick/thin strokes depending on direction.</td></tr>
+  <tr><td><strong>watercolor</strong></td><td>Translucent wet edges. Color fades toward the brush boundary with soft randomness, building up with repeated strokes.</td></tr>
+  <tr><td><strong>oil</strong></td><td>Thick blending. Each dot mixes the pen color with the existing canvas color at 50% strength, creating a smooth paint-mixing effect.</td></tr>
+  <tr><td><strong>glow</strong></td><td>Soft radial halo. A bright core fades into a wide bloom, useful for light sources and neon-like glows at lower intensities.</td></tr>
+  <tr><td><strong>neon</strong></td><td>Bright core with a wide color bloom. The center is lightened toward white; the surrounding bloom uses the pen color at reduced opacity.</td></tr>
+</table>
+</section>
+
+<section id="spray">
+<h2>Spray</h2>
+<p>Airbrush tool. Hold left-click to spray with the primary color; hold right-click for the secondary color. Dots are placed continuously while the button is held.</p>
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>Radius (L / R)</td><td>Spray circle radius in pixels for each channel.</td></tr>
+  <tr><td>Density (L / R)</td><td>Number of dots placed per timer tick for each channel.</td></tr>
+  <tr><td>Color (L / R)</td><td>Color buttons for left and right spray channels.</td></tr>
+</table>
+</section>
+
+<section id="forms">
+<h2>Forms</h2>
+<p>Draw geometric shapes by clicking and dragging. Right-click while dragging cancels the current shape.</p>
+<h3>Available Shapes</h3>
+<ul>
+  <li><strong>Line</strong> – Straight line with optional arrowheads at start and/or end.</li>
+  <li><strong>Rectangle</strong> – Filled or outlined rectangle with optional rounded corners.</li>
+  <li><strong>Ellipse</strong> – Filled or outlined ellipse.</li>
+  <li><strong>Circle</strong> – Radius-based circle. Supports donut mode, arc/pie segments, and span angle.</li>
+  <li><strong>Triangle</strong> – Configurable orientation (horizontal / vertical / perpendicular).</li>
+  <li><strong>Trapezoid</strong> – Standard trapezoid. Use <strong>⇕ Flip</strong> to invert it vertically.</li>
+  <li><strong>Parallelogram</strong> – Horizontal or vertical orientation.</li>
+  <li><strong>Arrow</strong> – Arrow polygon shape with configurable head size and direction.</li>
+  <li><strong>Star</strong> – Configurable number of points (corners).</li>
+  <li><strong>N-gon</strong> – Regular polygon with configurable number of edges.</li>
+  <li><strong>Cross</strong> – Plus / cross shape.</li>
+  <li><strong>Heart</strong> – Heart shape.</li>
+  <li><strong>Lightning</strong> – Lightning bolt shape.</li>
+  <li><strong>Callout</strong> – Speech-bubble shape with configurable tail position.</li>
+</ul>
+<img src="simple_draw_forms.jpg" alt="Available forms" style="width:100%;max-width:820px;border:1px solid var(--border);border-radius:6px;margin-top:12px;display:block;">
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>Pen color / width</td><td>Outline color and thickness.</td></tr>
+  <tr><td>Fill color</td><td>Interior fill color.</td></tr>
+  <tr><td>Transparent fill</td><td>Draw outline only, no fill.</td></tr>
+  <tr><td>Line style</td><td>Solid, dashed, dotted, or dash-dotted outline.</td></tr>
+  <tr><td>AA</td><td>Anti-aliasing toggle for smooth edges.</td></tr>
+  <tr><td>Corner radius (R)</td><td>Rounded corners for rectangles.</td></tr>
+  <tr><td>From / Span</td><td>Start angle and span for circle arcs (degrees).</td></tr>
+  <tr><td>Pie</td><td>Draw a filled pie slice instead of an arc.</td></tr>
+  <tr><td>⊙ Donut / Gap</td><td>Hollow circle with configurable inner gap.</td></tr>
+  <tr><td>Arrow options</td><td>Arrowhead at start, end, or both; inward/outward direction; head size.</td></tr>
+  <tr><td>N (corners / edges)</td><td>Number of star points or polygon sides.</td></tr>
+  <tr><td>Tail %</td><td>Horizontal position of the callout tail (0–100%).</td></tr>
+  <tr><td>⊞ Snap</td><td>Snap shape endpoints to the grid (requires grid to be visible).</td></tr>
+</table>
+</section>
+
+<section id="fill">
+<h2>Fill (Flood Fill)</h2>
+<p>Fills a contiguous region of the same color. Respects the active selection if one exists.</p>
+<table>
+  <tr><th>Action</th><th>Color used</th></tr>
+  <tr><td>Left-click</td><td>L-Click fill color</td></tr>
+  <tr><td>Right-click</td><td>R-Click fill color</td></tr>
+</table>
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>L-Click color</td><td>Fill color used on left-click.</td></tr>
+  <tr><td>L-Click Tolerance</td><td>0 = exact color match only; higher values fill pixels with similar colors (max 255).</td></tr>
+  <tr><td>R-Click color</td><td>Fill color used on right-click.</td></tr>
+  <tr><td>R-Click Tolerance</td><td>Independent tolerance for right-click fills.</td></tr>
+</table>
+</section>
+
+<section id="eraser">
+<h2>Eraser</h2>
+<p>Paints pixels with the current background color. Drag to erase continuously. Right-click cancels any active selection.</p>
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>Width</td><td>Eraser size in pixels.</td></tr>
+</table>
+</section>
+
+<section id="selection">
+<h2>Selection</h2>
+<p>Select a region of the canvas to move, copy, cut, or apply effects to.</p>
+<h3>Selection Modes</h3>
+<table>
+  <tr><th>Mode</th><th>Description</th></tr>
+  <tr><td>Rectangle</td><td>Drag to draw a rectangular selection.</td></tr>
+  <tr><td>Circle</td><td>Drag to draw a circular selection (radius from center).</td></tr>
+  <tr><td>Ellipse</td><td>Drag to draw an elliptical selection.</td></tr>
+  <tr><td>Lasso</td><td>Draw a freehand polygon selection.</td></tr>
+  <tr><td>Magic Wand</td><td>Click to select a contiguous region of similar color.</td></tr>
+</table>
+<h3>Operations</h3>
+<table>
+  <tr><th>Operation</th><th>Description</th></tr>
+  <tr><td>Select</td><td>Mark a region without lifting pixels.</td></tr>
+  <tr><td>Cut</td><td>Lift the selected pixels (replaced with background color) into a floating layer. Drag to reposition, then click outside to commit.</td></tr>
+  <tr><td>Copy</td><td>Copy the selected pixels into a floating layer. The original stays intact. Click the origin to stamp another copy.</td></tr>
+</table>
+<h3>Option Bar</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>Shape</td><td>Selection shape: Rectangle, Circle, Ellipse, Lasso, or Magic Wand.</td></tr>
+  <tr><td>Op</td><td>Operation mode: Select, Cut, or Copy.</td></tr>
+  <tr><td>⤢ Resize</td><td>Enable resize handles on the selection boundary. Drag any of the eight handles to resize.</td></tr>
+  <tr><td>⇔ Flip H / ⇕ Flip V</td><td>Flip the floating cut or copy layer horizontally or vertically.</td></tr>
+  <tr><td>Rotate</td><td>Rotate the floating cut or copy layer by the specified angle.</td></tr>
+  <tr><td>Delete</td><td>Delete the selected region (fill with background color).</td></tr>
+</table>
+<div class="note"><kbd>Escape</kbd> or right-click cancels the current selection and restores the canvas.</div>
+</section>
+
+<section id="text">
+<h2>Text</h2>
+<p>Click on the canvas to place text at that position. A live preview follows the cursor.</p>
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>Font</td><td>Font family selector.</td></tr>
+  <tr><td>Size</td><td>Font size in points.</td></tr>
+  <tr><td>Bold / Italic / Underline</td><td>Text style toggles.</td></tr>
+  <tr><td>Text color</td><td>Foreground color of the text.</td></tr>
+  <tr><td>Background color</td><td>Background fill behind the text.</td></tr>
+  <tr><td>Transparent background</td><td>No background fill.</td></tr>
+  <tr><td>AA</td><td>Anti-aliasing for text rendering.</td></tr>
+  <tr><td>Box</td><td>Draw a border box around the text.</td></tr>
+  <tr><td>Box style / color / margin / width</td><td>Configure the border box appearance.</td></tr>
+  <tr><td>Text input</td><td>Type the text to be placed.</td></tr>
+</table>
+</section>
+
+<section id="picker">
+<h2>Color Picker</h2>
+<p>Sample a color directly from the canvas. Hold <kbd>Alt</kbd> from any tool to temporarily switch to the picker.</p>
+<table>
+  <tr><th>Action</th><th>Result</th></tr>
+  <tr><td>Left-click</td><td>Sets the primary color (pen, fill, text, spray left).</td></tr>
+  <tr><td>Right-click</td><td>Sets the secondary color (pen right, fill right, spray right).</td></tr>
+</table>
+<h3>Options</h3>
+<table>
+  <tr><th>Option</th><th>Description</th></tr>
+  <tr><td>L-Pick swatch</td><td>Shows the last left-picked color with its RGB values.</td></tr>
+  <tr><td>L-Pick R</td><td>Sample radius for left-click. 0 = single pixel; higher values average surrounding pixels.</td></tr>
+  <tr><td>R-Pick swatch</td><td>Shows the last right-picked color with its RGB values.</td></tr>
+  <tr><td>R-Pick R</td><td>Independent sample radius for right-click.</td></tr>
+</table>
+</section>
+
+<section id="ruler">
+<h2>Ruler</h2>
+<p>Measure distances and angles between two points on the canvas.</p>
+<ul>
+  <li><strong>Left-click and drag</strong> to draw a measurement line.</li>
+  <li>The status bar shows <strong>ΔX</strong>, <strong>ΔY</strong>, <strong>Length</strong> (pixels), and <strong>Angle</strong> (degrees) in real time.</li>
+  <li><strong>Right-click</strong> or press <kbd>Escape</kbd> to clear the ruler line.</li>
+</ul>
+</section>
+
+<section id="colors">
+<h2>Colors</h2>
+<h3>Dual Channel</h3>
+<ul>
+  <li><strong>Left channel</strong> – activated by left-click. Controls pen color, fill color, spray color, text color.</li>
+  <li><strong>Right channel</strong> – activated by right-click. Controls secondary pen, fill, and spray colors.</li>
+</ul>
+<h3>Color History</h3>
+<p>The last 10 used colors are shown as small swatches in the status bar.</p>
+<ul>
+  <li><strong>Left-click</strong> a swatch to apply it to all left-channel colors.</li>
+  <li><strong>Right-click</strong> a swatch to apply it to all right-channel colors.</li>
+</ul>
+<h3>Background Color</h3>
+<p>Used by the Eraser and as the fill when cutting a selection. Click the <strong>Background Color</strong> button (<kbd>B</kbd>) in the toolbar to change it.</p>
+<h3>Palette / Color Depth</h3>
+<table>
+  <tr><th>Depth</th><th>Colors</th></tr>
+  <tr><td>1-bit</td><td>2 (black &amp; white)</td></tr>
+  <tr><td>2-bit</td><td>4 grayscale levels</td></tr>
+  <tr><td>4-bit</td><td>16 grayscale levels</td></tr>
+  <tr><td>8-bit</td><td>256 colors</td></tr>
+  <tr><td>16-bit</td><td>65 536 colors</td></tr>
+  <tr><td>24-bit</td><td>16.7 million colors (default)</td></tr>
+  <tr><td>32-bit</td><td>24-bit + alpha channel</td></tr>
+</table>
+</section>
+
+<section id="canvas">
+<h2>Canvas</h2>
+<h3>Canvas Size</h3>
+<p>Open via <strong>Edit → Size</strong>. Includes lock-ratio, ratio presets (4:3, 16:9, 16:10, 2:3, 5:7, 9:16), and size presets (8×8 up to 4K).</p>
+<h3>Grid</h3>
+<p>Toggle via <strong>View → Show Grid</strong>. Configure cell size via <strong>View → Grid Settings</strong>. Enable <strong>⊞ Snap</strong> in the Forms option bar to snap shape endpoints to the grid.</p>
+<img src="simple_draw_grid.jpg" alt="Grid overlay" style="width:100%;max-width:820px;border:1px solid var(--border);border-radius:6px;margin-top:8px;margin-bottom:12px;display:block;">
+<h3>Zoom</h3>
+<table>
+  <tr><th>Action</th><th>Result</th></tr>
+  <tr><td>Scroll wheel</td><td>Zoom in / out centered on cursor</td></tr>
+  <tr><td>Quick bar Zoom In / Out</td><td>Zoom ×1.25 / ÷1.25</td></tr>
+  <tr><td>Quick bar Reset Zoom</td><td>Fit canvas to window</td></tr>
+</table>
+<h3>Flip &amp; Rotate</h3>
+<p>Available under <strong>Edit</strong> menu: Flip Horizontal, Flip Vertical, Rotate Clockwise (90°), Rotate Counter-Clockwise (90°).</p>
+</section>
+
+<section id="effects">
+<h2>Effects</h2>
+<p>Found under the <strong>Edit → Effects</strong> menu and as toolbar shortcuts. Apply to the active selection if one exists, otherwise to the entire canvas.</p>
+<table>
+  <tr><th>Effect</th><th>Description</th></tr>
+  <tr><td>Grayscale</td><td>Convert to grayscale (toggle).</td></tr>
+  <tr><td>Invert</td><td>Invert all pixel colors.</td></tr>
+  <tr><td>Smooth</td><td>Blur with configurable radius.</td></tr>
+  <tr><td>Sharpen</td><td>Enhance edge contrast.</td></tr>
+  <tr><td>Brightness / Contrast</td><td>Adjust with sliders (−100 to +100).</td></tr>
+  <tr><td>Saturation</td><td>Increase or decrease color saturation (−100 to +100).</td></tr>
+  <tr><td>Noise</td><td>Add random pixel noise (0–100).</td></tr>
+  <tr><td>Pixelate</td><td>Blocky pixelation with configurable block size.</td></tr>
+  <tr><td>Color Fade</td><td>Gradient blend between two colors across the canvas.</td></tr>
+  <tr><td>Posterize</td><td>Reduce the number of color levels (2–16).</td></tr>
+  <tr><td>Emboss</td><td>Emboss / relief effect.</td></tr>
+  <tr><td>Vignette</td><td>Darken the edges of the canvas (0–200).</td></tr>
+</table>
+</section>
+
+<section id="view">
+<h2>View</h2>
+<ul>
+  <li><strong>Show Grid</strong> – Toggle pixel grid overlay.</li>
+  <li><strong>Grid Settings</strong> – Set grid cell width and height in pixels.</li>
+  <li><strong>Grayscale preview</strong> – Toggle grayscale mode (toolbar button).</li>
+  <li><strong>Sym H / Sym V</strong> – Mirror pencil strokes horizontally and/or vertically.</li>
+</ul>
+</section>
+
+<section id="file">
+<h2>File Operations</h2>
+<table>
+  <tr><th>Action</th><th>Shortcut</th><th>Description</th></tr>
+  <tr><td>New File</td><td><kbd>Ctrl+N</kbd></td><td>Create a new blank canvas.</td></tr>
+  <tr><td>Open</td><td><kbd>Ctrl+O</kbd></td><td>Open an image file.</td></tr>
+  <tr><td>Save</td><td><kbd>Ctrl+S</kbd></td><td>Save the current file.</td></tr>
+  <tr><td>Save As</td><td>–</td><td>Save to a new file path.</td></tr>
+  <tr><td>Export Image</td><td>–</td><td>Export as PNG, JPEG, BMP, TIFF, or WebP.</td></tr>
+  <tr><td>Export to Code</td><td>–</td><td>Export the image as a C or Python byte array.</td></tr>
+  <tr><td>Print</td><td><kbd>Ctrl+P</kbd></td><td>Print the canvas.</td></tr>
+  <tr><td>Exit</td><td><kbd>Ctrl+Q</kbd></td><td>Close the application.</td></tr>
+</table>
+<h3>Recent Files</h3>
+<p>The last 10 opened files are listed under <strong>File → Recent Files</strong>.</p>
+<h3>Clipboard</h3>
+<table>
+  <tr><th>Action</th><th>Shortcut</th></tr>
+  <tr><td>Copy canvas to clipboard</td><td><kbd>Ctrl+C</kbd></td></tr>
+  <tr><td>Copy selection to clipboard</td><td><kbd>Ctrl+Shift+C</kbd></td></tr>
+  <tr><td>Paste from clipboard</td><td><kbd>Ctrl+V</kbd></td></tr>
+</table>
+<div class="note">When pasting an image whose dimensions differ from the canvas, a dialog offers: <strong>Resize Canvas</strong>, <strong>Paste as New</strong>, or <strong>Paste Anyway</strong>.</div>
+</section>
+
+<section id="shortcuts">
+<h2>Keyboard Shortcuts</h2>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>P</kbd></td><td>Pencil tool</td></tr>
+  <tr><td><kbd>S</kbd></td><td>Spray tool</td></tr>
+  <tr><td><kbd>F</kbd></td><td>Forms tool</td></tr>
+  <tr><td><kbd>G</kbd></td><td>Fill tool</td></tr>
+  <tr><td><kbd>E</kbd></td><td>Eraser tool</td></tr>
+  <tr><td><kbd>C</kbd></td><td>Selection tool</td></tr>
+  <tr><td><kbd>T</kbd></td><td>Text tool</td></tr>
+  <tr><td><kbd>I</kbd></td><td>Color Picker tool</td></tr>
+  <tr><td><kbd>R</kbd></td><td>Ruler tool</td></tr>
+  <tr><td><kbd>B</kbd></td><td>Background color picker</td></tr>
+  <tr><td><kbd>Alt</kbd> (hold)</td><td>Temporarily switch to Color Picker</td></tr>
+  <tr><td><kbd>Escape</kbd></td><td>Cancel active selection</td></tr>
+  <tr><td><kbd>Delete</kbd></td><td>Delete selected region</td></tr>
+  <tr><td><kbd>Ctrl+Z</kbd></td><td>Undo</td></tr>
+  <tr><td><kbd>Ctrl+Y</kbd></td><td>Redo</td></tr>
+  <tr><td><kbd>Ctrl+N</kbd></td><td>New file</td></tr>
+  <tr><td><kbd>Ctrl+O</kbd></td><td>Open file</td></tr>
+  <tr><td><kbd>Ctrl+S</kbd></td><td>Save</td></tr>
+  <tr><td><kbd>Ctrl+P</kbd></td><td>Print</td></tr>
+  <tr><td><kbd>Ctrl+C</kbd></td><td>Copy canvas to clipboard</td></tr>
+  <tr><td><kbd>Ctrl+Shift+C</kbd></td><td>Copy selection to clipboard</td></tr>
+  <tr><td><kbd>Ctrl+V</kbd></td><td>Paste from clipboard</td></tr>
+  <tr><td><kbd>Ctrl+Q</kbd></td><td>Exit</td></tr>
+</table>
+<div class="note">All shortcuts can be customised in <strong>Info → Preferences → Shortcuts</strong>.</div>
+</section>
+
+<section id="preferences">
+<h2>Preferences</h2>
+<p>Open via <strong>Info → Preferences</strong>.</p>
+<h3>Theme</h3>
+<p>Switch between <strong>Light</strong> and <strong>Dark</strong> application themes.</p>
+<h3>Shortcuts</h3>
+<p>All keyboard shortcuts are listed in a table. Double-click a shortcut cell, press the desired key combination, then click <strong>Apply</strong> or <strong>OK</strong> to save.</p>
+<h3>Auto-save</h3>
+<p>Set an auto-save interval in minutes (0 = disabled). Auto-save writes to <code>&lt;filename&gt;_autosave.bmp</code> next to the current file.</p>
+<p>All tool settings (colors, widths, pen types, form options, text settings, etc.) are saved automatically on exit and restored on next launch.</p>
+</section>
+
+<section id="scripts">
+<h2>Scripts / Macros</h2>
+<p>SimpleDraw supports Python macro scripts that automate drawing operations. Scripts are plain <code>.py</code> files placed in the <code>scripts/</code> folder next to the application.</p>
+<div class="note">⚠ Scripts run with full Python access to your system. Only run scripts you trust.</div>
+<h3>Opening the Scripts Window</h3>
+<p>Click the <strong>Scripts</strong> button in the quick bar. The window lists all <code>.py</code> files in the <code>scripts/</code> folder.</p>
+<h3>Running a Script</h3>
+<ol>
+  <li>Select a script from the list.</li>
+  <li>Click <strong>▶ Run</strong>. The button changes to <strong>■ Stop</strong> while running.</li>
+  <li>Click <strong>■ Stop</strong> to interrupt at the next API call.</li>
+</ol>
+<h3>Console</h3>
+<p>Click <strong>Console</strong> to open the output window showing <code>print()</code> output and error tracebacks. The console opens automatically on error.</p>
+<h3>Writing a Script</h3>
+<p>The canvas is exposed as the object <code>canvas</code>. Qt types <code>QColor</code>, <code>QPoint</code>, <code>QRect</code>, <code>QPainter</code>, <code>QPen</code> are also available.</p>
+<div class="note">Call <code>canvas.push_undo()</code> once before your drawing operations and <code>canvas.commit()</code> at the end. Avoid calling <code>push_undo()</code> inside a tight loop.</div>
+<pre>w, h = canvas.get_size()
+canvas.push_undo()
+
+step = 40
+for x in range(0, w, step):
+    canvas.draw_form('line', (x, 0), (x, h-1), width=1, color='#aaaaaa', transparent=True)
+for y in range(0, h, step):
+    canvas.draw_form('line', (0, y), (w-1, y), width=1, color='#aaaaaa', transparent=True)
+
+canvas.commit()</pre>
+<pre>import math
+
+can_size = 265
+canvas.set_size(can_size, can_size)
+canvas.push_undo()
+
+canvas.clear()
+canvas.set_background_color(255, 255, 255)
+
+start_pos = (can_size / 2, can_size / 2)
+max_wave = int((can_size - 5) / 2)
+for radius in range(1, max_wave, 1):
+    c = int(127 * math.sin(2 * math.pi * radius / max_wave - 128) + 128)
+    canvas.draw_form('circle', start_pos, radius, 1, (c, c, c), (0, 0, 0), True, 0, 0, False, True)
+
+canvas.commit()</pre>
+<img src="simple_draw_circle.jpg" alt="Wave circles example" style="width:50%;max-width:410px;border:1px solid var(--border);border-radius:6px;margin-top:4px;display:block;">
+</section>
+
+<section id="scripts-api">
+<h2>Script API Reference</h2>
+<p>All methods are called on the <code>canvas</code> object.</p>
+<h3>Starting and Stopping</h3>
+<ul>
+  <li>Click the <strong>Record</strong> button (grey circle) in the quick bar to start recording. The button turns red.</li>
+  <li>Click again to stop. The script is saved automatically to the <code>scripts/</code> folder with a timestamped name (<code>recorded_YYYYMMDD_HHMMSS.py</code>).</li>
+  <li>The saved script appears immediately in the Scripts window.</li>
+</ul>
+<h3>What Gets Recorded</h3>
+<table>
+  <tr><th>Action</th><th>Recorded as</th></tr>
+  <tr><td>Pencil stroke (left or right channel)</td><td><code>canvas.draw_stroke(...)</code></td></tr>
+  <tr><td>Spray (left or right channel)</td><td><code>canvas.spray(...)</code></td></tr>
+  <tr><td>Form shape</td><td><code>canvas.draw_form(...)</code></td></tr>
+  <tr><td>Fill (left or right click)</td><td><code>canvas.fill(...)</code></td></tr>
+  <tr><td>Text placement</td><td><code>canvas.draw_text(...)</code></td></tr>
+  <tr><td>Rectangle / circle / ellipse selection (Select mode)</td><td><code>canvas.set_selection(...)</code></td></tr>
+  <tr><td>Magic wand selection (Select mode)</td><td><code>canvas.set_selection('wand', ...)</code></td></tr>
+  <tr><td>Canvas resize</td><td><code>canvas.set_size(...)</code></td></tr>
+  <tr><td>Flip / rotate canvas</td><td><code>canvas.apply_effect(...)</code></td></tr>
+  <tr><td>Effects (sharpen, emboss, grayscale, invert, etc.)</td><td><code>canvas.apply_effect(...)</code></td></tr>
+  <tr><td>Deselect (Escape / right-click after a used selection)</td><td><code>canvas.deselect()</code></td></tr>
+</table>
+<div class="note">Selections made in Cut or Copy mode are not recorded — only Select-mode selections are. Cancelling an unused selection (Escape immediately after selecting) removes the last recorded selection line silently. Cancelling after the selection was used (e.g. a fill or effect was applied) records <code>canvas.deselect()</code>.</div>
+<h3>Colors in Recorded Scripts</h3>
+<p>Repeated colors are automatically extracted into named variables (<code>c1</code>, <code>c2</code>, …) at the top of the script to keep it readable.</p>
+</section>
+
+<section id="recording">
+<h2>Recording</h2>
+<p>SimpleDraw can record your drawing actions into a replayable Python script.</p>
+
+<h3>Canvas Info</h3>
+<table>
+  <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+  <tr><td><code>get_size(ghost=False)</code></td><td><code>(w, h)</code></td><td>Canvas (or ghost) width and height in pixels.</td></tr>
+  <tr><td><code>set_size(w, h)</code></td><td>–</td><td>Resize the canvas to w × h pixels.</td></tr>
+  <tr><td><code>clear(ghost=False)</code></td><td>–</td><td>Fill canvas with background color (or ghost with transparent).</td></tr>
+</table>
+
+<h3>Colors</h3>
+<table>
+  <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+  <tr><td><code>get_color(pos, tolerance=0, ghost=False)</code></td><td><code>(r,g,b)</code> or <code>-1</code></td><td>Color at (x,y). tolerance&gt;0 averages a neighbourhood. Returns -1 if out of bounds.</td></tr>
+  <tr><td><code>get_background_color()</code></td><td><code>(r,g,b)</code></td><td>Current background color.</td></tr>
+  <tr><td><code>set_background_color(r, g, b)</code></td><td>–</td><td>Set the background color.</td></tr>
+</table>
+
+<h3>Drawing</h3>
+<table>
+  <tr><th>Method</th><th>Description</th></tr>
+  <tr><td><code>draw(pos, channel=1, color=None, ghost=False)</code></td><td>Draw a single pixel at (x,y). color: hex string, name, or (r,g,b) tuple — if omitted, uses the channel's current pen color. channel: 1=primary, 2=secondary.</td></tr>
+  <tr><td><code>draw_stroke(points, width=1, color=None, pen_type='normal', intensity=100)</code></td><td>Draw a polyline through a list of (x,y) tuples. color: hex string, name, or (r,g,b) tuple. pen_type: <code>normal</code>, <code>chalk</code>, <code>charcoal</code>, <code>calligraphy</code>, <code>watercolor</code>, <code>oil</code>, <code>glow</code>, <code>neon</code>. intensity: 1–100.</td></tr>
+  <tr><td><code>draw_form(form_type, pos1, pos2, width=1, color=None, fill_color=None, transparent=False, corners=4, edges=5, antialias=False, ghost=False)</code></td><td>
+    Draw a shape.<br>
+    <strong>form_type</strong>: <code>line</code>, <code>rectangle</code>, <code>ellipse</code>, <code>circle</code>, <code>triangle</code>, <code>trapezoid</code>, <code>parallelogram</code>, <code>arrow</code>, <code>star</code>, <code>ngon</code>, <code>cross</code>, <code>callout</code>, <code>heart</code>, <code>lightning</code>.<br>
+    <strong>pos1</strong>: start point or center (x,y).<br>
+    <strong>pos2</strong>: end point (x,y), or a number — for <code>circle</code> this is the radius from <code>pos1</code>.<br>
+    <strong>corners</strong>: star points (star only).<br>
+    <strong>edges</strong>: polygon sides (ngon only).
+  </td></tr>
+  <tr><td><code>fill(pos, color=None, tolerance=0)</code></td><td>Flood-fill at (x,y). Respects active selection.</td></tr>
+  <tr><td><code>spray(pos, radius=20, density=30, color=None)</code></td><td>Spray dots at pos. pos can be a single (x,y) or a list of (x,y) tuples (as recorded by the spray tool).</td></tr>
+</table>
+
+<h3>Pen Types</h3>
+<table>
+  <tr><th>pen_type</th><th>Description</th></tr>
+  <tr><td><code>normal</code></td><td>Solid pixels. At intensity &lt;100% each pixel is alpha-blended with the canvas.</td></tr>
+  <tr><td><code>chalk</code></td><td>Grainy scattered dots with random opacity within the brush radius.</td></tr>
+  <tr><td><code>charcoal</code></td><td>Soft radial falloff with slight randomness, builds up with repeated strokes.</td></tr>
+  <tr><td><code>calligraphy</code></td><td>Flat 45°-angled nib — wide on one axis, thin on the other.</td></tr>
+  <tr><td><code>watercolor</code></td><td>Translucent with soft fading edges, builds up with repeated strokes.</td></tr>
+  <tr><td><code>oil</code></td><td>Blends pen color with existing canvas color at 50% per dot.</td></tr>
+  <tr><td><code>glow</code></td><td>Bright core with a wide soft halo fading outward.</td></tr>
+  <tr><td><code>neon</code></td><td>Lightened core near white with a wide color bloom around it.</td></tr>
+</table>
+
+<h3>Text</h3>
+<table>
+  <tr><th>Method</th><th>Description</th></tr>
+  <tr><td><code>draw_text(text, pos, font=None, size=None, bold=False, italic=False, underline=False, color=None, bg_color=None, bg_transparent=None, antialias=None, box=False, box_color=None, box_margin=None, box_style='solid', box_width=1, ghost=False)</code></td><td>Render text at pos (x,y) with full style control. All style args are optional — omitting them uses current Text tool settings.</td></tr>
+</table>
+
+<h3>Effects</h3>
+<p>Effects respect the active selection if one is set via <code>set_selection()</code>.</p>
+<table>
+  <tr><th>Call</th><th>Description</th></tr>
+  <tr><td><code>apply_effect('grayscale')</code></td><td>Convert to grayscale.</td></tr>
+  <tr><td><code>apply_effect('invert')</code></td><td>Invert all colors.</td></tr>
+  <tr><td><code>apply_effect('smooth', radius=1)</code></td><td>Blur with given radius.</td></tr>
+  <tr><td><code>apply_effect('sharpen')</code></td><td>Sharpen edges.</td></tr>
+  <tr><td><code>apply_effect('emboss')</code></td><td>Emboss relief effect.</td></tr>
+  <tr><td><code>apply_effect('brightness_contrast', brightness=0, contrast=0)</code></td><td>Adjust brightness/contrast (−100 to +100).</td></tr>
+  <tr><td><code>apply_effect('saturation', value=0)</code></td><td>Adjust saturation (−100 to +100).</td></tr>
+  <tr><td><code>apply_effect('noise', value=10)</code></td><td>Add random noise (0–100).</td></tr>
+  <tr><td><code>apply_effect('pixelate', block=8)</code></td><td>Pixelate with given block size.</td></tr>
+  <tr><td><code>apply_effect('posterize', levels=4)</code></td><td>Reduce color levels (2–16).</td></tr>
+  <tr><td><code>apply_effect('vignette', strength=100)</code></td><td>Darken edges (0–200).</td></tr>
+  <tr><td><code>apply_effect('flip_horizontal')</code> / <code>'flip_vertical'</code></td><td>Flip the canvas.</td></tr>
+  <tr><td><code>apply_effect('rotate_cw')</code> / <code>'rotate_ccw'</code></td><td>Rotate the canvas 90°.</td></tr>
+</table>
+
+<h3>Selection</h3>
+<table>
+  <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+  <tr><td><code>set_selection(shape, x, y, w, h)</code></td><td><code>{x,y,w,h}</code></td><td>Set the active selection. shape: <code>rectangle</code>, <code>circle</code>, <code>ellipse</code>, <code>wand</code>. For <code>wand</code>, x,y is the click point — the flood-fill mask is rebuilt from the image at that point. For circle/ellipse, x,y,w,h define the bounding box.</td></tr>
+  <tr><td><code>deselect()</code></td><td>–</td><td>Clear the active selection.</td></tr>
+</table>
+
+<h3>Ghost Canvas</h3>
+<p>A hidden off-screen image the same size as the visible canvas. Only scripts can access it.</p>
+<table>
+  <tr><th>Method</th><th>Description</th></tr>
+  <tr><td><code>copy_to_ghost()</code></td><td>Copy the visible canvas into the ghost.</td></tr>
+  <tr><td><code>copy_from_ghost()</code></td><td>Composite the ghost onto the visible canvas.</td></tr>
+</table>
+<p>Pass <code>ghost=True</code> to <code>draw()</code>, <code>draw_form()</code>, <code>draw_stroke()</code>, <code>get_color()</code>, <code>get_size()</code>, <code>clear()</code>, <code>save_image()</code>, and <code>load_image()</code> to target the ghost.</p>
+
+<h3>File I/O</h3>
+<table>
+  <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+  <tr><td><code>save_image(filename, ghost=False)</code></td><td>full path</td><td>Save the canvas (or ghost) to <code>scripts/filename</code>.</td></tr>
+  <tr><td><code>load_image(filename, ghost=False)</code></td><td><code>(w,h)</code></td><td>Load <code>scripts/filename</code> into the canvas or ghost. Pushes an undo entry when loading into the visible canvas.</td></tr>
+</table>
+
+<h3>Cursor</h3>
+<table>
+  <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+  <tr><td><code>get_cursor_pos()</code></td><td><code>(x,y)</code> or <code>-1</code></td><td>Current mouse position in canvas coordinates, or -1 if outside.</td></tr>
+  <tr><td><code>set_cursor_pos(x, y)</code></td><td><code>(x,y)</code> or <code>-1</code></td><td>Move the cursor to (x,y). Returns -1 if out of bounds.</td></tr>
+</table>
+
+<h3>Undo / Commit</h3>
+<table>
+  <tr><th>Method</th><th>Description</th></tr>
+  <tr><td><code>push_undo()</code></td><td>Save the current canvas state to the undo stack. Call once before a batch of drawing operations.</td></tr>
+  <tr><td><code>commit()</code></td><td>Refresh the canvas display and mark the file as modified. Call at the end of your script.</td></tr>
+</table>
+
+</section>
+
+</main>
+<script>
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
